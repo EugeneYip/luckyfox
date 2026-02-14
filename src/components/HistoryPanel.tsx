@@ -2,6 +2,7 @@ import { HistoryEntry } from '@/lib/wheelUtils';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Trash2 } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
 
 interface HistoryPanelProps {
   history: HistoryEntry[];
@@ -9,14 +10,15 @@ interface HistoryPanelProps {
 }
 
 export function HistoryPanel({ history, onClear }: HistoryPanelProps) {
+  const { t } = useI18n();
   if (history.length === 0) return null;
 
   return (
     <div className="bg-card rounded-xl border p-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="font-semibold text-sm">歷史紀錄</h3>
+        <h3 className="font-semibold text-sm">{t('history')}</h3>
         <Button variant="ghost" size="sm" onClick={onClear} className="h-7 text-xs text-muted-foreground">
-          <Trash2 size={12} className="mr-1" /> 清除
+          <Trash2 size={12} className="mr-1" /> {t('clearHistory')}
         </Button>
       </div>
       <ScrollArea className="max-h-[200px]">
