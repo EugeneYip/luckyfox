@@ -6,12 +6,12 @@ import {
   playTick, playWinSound, tryVibrate,
   serializeState, deserializeState,
 } from '@/lib/wheelUtils';
-import { useI18n } from '@/lib/i18n';
+import { useI18n, SAMPLE_ITEMS } from '@/lib/i18n';
 
 const STORAGE_KEY = 'lucky-wheel-data';
 const HISTORY_KEY = 'lucky-wheel-history';
 
-function loadInitialData(): { items: WheelItem[]; settings: WheelSettings } {
+function loadInitialData(lang: string = 'en'): { items: WheelItem[]; settings: WheelSettings } {
   const hash = window.location.hash.slice(1);
   if (hash) {
     const data = deserializeState(hash);
@@ -24,14 +24,14 @@ function loadInitialData(): { items: WheelItem[]; settings: WheelSettings } {
       if (data?.items?.length) return data;
     }
   } catch { /* ignore */ }
-  const lang = (localStorage.getItem('wheel-lang') || 'en') as any;
-  return { items: createSampleItems(lang), settings: DEFAULT_SETTINGS };
+  return { items: createSampleItems(lang as any), settings: DEFAULT_SETTINGS };
 }
 
 export function useWheel() {
   const { lang, t } = useI18n();
-  const [items, setItems] = useState<WheelItem[]>(() => loadInitialData().items);
-  const [settings, setSettings] = useState<WheelSettings>(() => loadInitialData().settings);
+  const [items, setItems] = useState<WheelItem[]>(() => loadInitialData(lang).items);
+  const [settings, setSettings] = useState<WheelSettings>(() => loadInitialData(lang).settings);
+  const prevLangRef = useRef(lang);
   const [rotation, setRotation] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [result, setResult] = useState<WheelItem | null>(null);
@@ -48,6 +48,19 @@ export function useWheel() {
       window.history.replaceState(null, '', window.location.pathname);
     }
   }, []);
+
+  useEffect(() => {
+    if (prevLangRef.current !== lang) {
+      prevLangRef.current = lang;
+      const currentTexts = items.map(i => i.text);
+      const isUsingSample = Object.values(SAMPLE_ITEMS).some((samples) =>
+        samples.length === currentTexts.length && samples.every((s, i) => s === currentTexts[i])
+      );
+      if (isUsingSample) {
+        setItems(createSampleItems(lang));
+      }
+    }
+  }, [lang]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ items, settings }));

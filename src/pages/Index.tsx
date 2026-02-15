@@ -13,15 +13,19 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="text-center pt-8 pb-4 px-4 relative">
-        <div className="absolute right-4 top-4 flex items-center gap-2">
-          <ThemeToggle />
-          <LangToggle />
+      <header className="pt-6 pb-4 px-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight truncate">
+              {t('title')}
+            </h1>
+          </div>
+          <div className="flex items-center gap-2 shrink-0 ml-3">
+            <ThemeToggle />
+            <LangToggle />
+          </div>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-          {t('title')}
-        </h1>
-        <p className="text-muted-foreground text-sm mt-1.5">{t('subtitle')}</p>
+        <p className="text-muted-foreground text-sm">{t('subtitle')}</p>
       </header>
 
       <main className="container mx-auto px-4 pb-10 max-w-5xl">
