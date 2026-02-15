@@ -4,6 +4,7 @@ import { WheelEditor } from '@/components/WheelEditor';
 import { ResultDialog } from '@/components/ResultDialog';
 import { HistoryPanel } from '@/components/HistoryPanel';
 import { LangToggle } from '@/components/LangToggle';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useI18n } from '@/lib/i18n';
 
 const Index = () => {
@@ -13,7 +14,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="text-center pt-8 pb-4 px-4 relative">
-        <div className="absolute right-4 top-4">
+        <div className="absolute right-4 top-4 flex items-center gap-2">
+          <ThemeToggle />
           <LangToggle />
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">

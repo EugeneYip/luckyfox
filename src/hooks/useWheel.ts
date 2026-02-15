@@ -6,6 +6,7 @@ import {
   playTick, playWinSound, tryVibrate,
   serializeState, deserializeState,
 } from '@/lib/wheelUtils';
+import { useI18n } from '@/lib/i18n';
 
 const STORAGE_KEY = 'lucky-wheel-data';
 const HISTORY_KEY = 'lucky-wheel-history';
@@ -23,10 +24,12 @@ function loadInitialData(): { items: WheelItem[]; settings: WheelSettings } {
       if (data?.items?.length) return data;
     }
   } catch { /* ignore */ }
-  return { items: createSampleItems(), settings: DEFAULT_SETTINGS };
+  const lang = (localStorage.getItem('wheel-lang') || 'en') as any;
+  return { items: createSampleItems(lang), settings: DEFAULT_SETTINGS };
 }
 
 export function useWheel() {
+  const { lang, t } = useI18n();
   const [items, setItems] = useState<WheelItem[]>(() => loadInitialData().items);
   const [settings, setSettings] = useState<WheelSettings>(() => loadInitialData().settings);
   const [rotation, setRotation] = useState(0);
@@ -40,16 +43,12 @@ export function useWheel() {
   const animRef = useRef<number>();
   const lastSegRef = useRef(-1);
 
-  // Clear hash on mount
   useEffect(() => {
     if (window.location.hash.length > 1) {
-      history.length; // just to reference
       window.history.replaceState(null, '', window.location.pathname);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Persist
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ items, settings }));
   }, [items, settings]);
@@ -94,9 +93,9 @@ export function useWheel() {
   }, []);
 
   const loadSample = useCallback(() => {
-    setItems(createSampleItems());
+    setItems(createSampleItems(lang));
     setSettings(DEFAULT_SETTINGS);
-  }, []);
+  }, [lang]);
 
   const updateSettings = useCallback((updates: Partial<WheelSettings>) => {
     setSettings(prev => ({ ...prev, ...updates }));
@@ -126,6 +125,8 @@ export function useWheel() {
     const startTime = performance.now();
     lastSegRef.current = -1;
 
+    const modeLabel = settings.mode === 'equal' ? t('modeEqual') : t('modeWeighted');
+
     const animate = (now: number) => {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
@@ -152,7 +153,7 @@ export function useWheel() {
         setHistory(prev => [{
           time: new Date().toLocaleString(),
           result: winner.text,
-          mode: settings.mode === 'equal' ? '等機率' : '依權重',
+          mode: modeLabel,
         }, ...prev].slice(0, 50));
 
         if (settings.noRepeat) {
@@ -162,7 +163,7 @@ export function useWheel() {
     };
 
     animRef.current = requestAnimationFrame(animate);
-  }, [isSpinning, enabledCount, items, settings, rotation]);
+  }, [isSpinning, enabledCount, items, settings, rotation, t]);
 
   const clearResult = useCallback(() => setResult(null), []);
   const clearHistory = useCallback(() => setHistory([]), []);
