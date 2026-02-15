@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
+
 import { Separator } from '@/components/ui/separator';
 import { Trash2, Plus, ChevronUp, ChevronDown, Copy, Shuffle } from 'lucide-react';
 import { toast } from 'sonner';
@@ -61,8 +61,8 @@ export function WheelEditor({
         )}
       </div>
 
-      <ScrollArea className="max-h-[240px] sm:max-h-[320px]">
-        <div className="space-y-2 pr-2">
+      <div className="max-h-[200px] sm:max-h-[300px] overflow-y-auto border rounded-lg p-1">
+        <div className="space-y-2 pr-1">
           {items.map((item, idx) => (
             <div key={item.id} className={`flex items-center gap-1.5 p-2 rounded-lg border transition-opacity ${!item.enabled ? 'opacity-40' : ''}`}>
               <input type="color" value={item.color} onChange={(e) => onUpdateItem(item.id, { color: e.target.value })} className="w-7 h-7 rounded cursor-pointer border-0 p-0 shrink-0" disabled={isSpinning} aria-label={t('colorLabel')} />
@@ -77,7 +77,7 @@ export function WheelEditor({
             </div>
           ))}
         </div>
-      </ScrollArea>
+      </div>
 
       <div className="flex gap-2 flex-wrap">
         <Button size="sm" variant="outline" onClick={() => onAddItem()} disabled={isSpinning}>
