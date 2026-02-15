@@ -164,9 +164,8 @@ ls dist
 
 Then in GitHub:
 1. Open **Settings** → **Pages**.
-2. In **Build and deployment**, choose **GitHub Actions**.
-3. Do **not** add the suggested `Static HTML`/`Jekyll` starter workflows for this repo (they publish source files and can cause blank pages for Vite apps).
-4. Use the existing workflow at `.github/workflows/deploy-pages.yml` and wait for it to publish `dist`.
+2. In **Build and deployment**, choose **GitHub Actions** and pick **Static HTML** (not Jekyll) when GitHub asks for a starter workflow.
+3. Commit the generated workflow, then wait for the Actions run to publish `dist`.
 
 Tip: your current preview URL (`...app.github.dev`) is temporary. GitHub Pages gives a stable URL.
 
@@ -177,54 +176,9 @@ If the site is "live" but completely blank, check **View Source** in browser:
 
 - If you see `<script type="module" src="/src/main.tsx"></script>` then GitHub is serving your raw repository files (Branch mode), not the built Vite files.
 - In that case, go to **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-- Use the workflow in `.github/workflows/deploy-pages.yml`, then push once to `main` (do not use the starter `Static HTML`/`Jekyll` templates for this Vite repo).
+- Use the workflow in `.github/workflows/deploy-pages.yml` (or pick **Static HTML** starter, not Jekyll), then push once to `main`.
 
 After Actions deploy completes, View Source should reference built assets like `./assets/index-xxxx.js` and the page should render normally.
-
-If DevTools Console shows `Failed to load module script ... MIME type "application/octet-stream"` and source contains `/src/main.tsx`, the site is still publishing repository source files instead of built artifacts.
-
-
-### Actions error: `npm ci` lockfile not in sync
-
-If build fails with `npm ci` saying `package.json and package-lock.json are not in sync`, use the repository workflow that installs dependencies with `npm install` for deploys, then later refresh lockfile in a development environment.
-
-In this repo, `deploy-pages.yml` uses `npm install --no-audit --no-fund` to avoid lockfile mismatch failures during deploy.
-
-If build logs still show `Run npm ci` after this fix, you are viewing an older run/commit. Open the run details and confirm checkout SHA is the latest commit from `main`, then re-run the workflow.
-
-### Actions build fails with webpack-cli prompt
-
-If Actions log shows lines like:
-
-- `Run npm install`
-- `webpack@... will be installed`
-- `Do you want to install 'webpack-cli' (yes/no):`
-
-then you are running GitHub's starter `Static HTML` workflow (webpack), **not** this repo's Vite workflow.
-
-Fix:
-
-1. In GitHub, open **Actions** and run workflow named **Deploy to GitHub Pages**.
-2. In repo file tree, check `.github/workflows/` and delete starter files such as `static.yml`, `jekyll-gh-pages.yml`, or any workflow that runs webpack.
-3. Keep only `.github/workflows/deploy-pages.yml` for Pages deploy in this repo.
-4. Re-run **Deploy to GitHub Pages** and wait for success.
-
-### 404 "File not found" on custom domain
-
-If Pages shows:
-
-- `404`
-- `File not found`
-- `For root URLs ... you must provide an index.html file`
-
-then deployment is usually not serving your built `dist` artifact yet. Check these in order:
-
-1. **Settings → Pages** must be **Source: GitHub Actions** (not Branch).
-2. **Actions** must show a successful run for `Deploy to GitHub Pages`.
-3. The workflow build job must upload `./dist` (this repo is already configured that way).
-4. Keep `public/CNAME` in repo so every deployment includes your custom domain (`lucky.eugeneyip.net`).
-
-After a successful deploy, opening `https://lucky.eugeneyip.net/` should load `index.html` from the deployed artifact instead of showing 404.
 
 ## What technologies are used for this project?
 
@@ -248,7 +202,7 @@ It also sets Vite `base` to relative assets (`./`) so Pages/custom-domain deploy
 1. Push your latest commit to `main`.
 2. In GitHub repo, open **Settings → Pages**.
 3. Under **Build and deployment**, choose **Source: GitHub Actions**.
-4. If GitHub shows template suggestions (`Static HTML` / `Jekyll`), skip them for this repository.
+4. If prompted for templates, choose **Static HTML** (not **GitHub Pages Jekyll**).
 5. Wait for workflow **Deploy to GitHub Pages** to complete.
 6. Your site URL will be shown in the workflow summary and Pages settings.
 
