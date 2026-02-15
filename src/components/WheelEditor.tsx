@@ -61,7 +61,7 @@ export function WheelEditor({
         )}
       </div>
 
-      <ScrollArea className="max-h-[320px]">
+      <ScrollArea className="max-h-[240px] sm:max-h-[320px]">
         <div className="space-y-2 pr-2">
           {items.map((item, idx) => (
             <div key={item.id} className={`flex items-center gap-1.5 p-2 rounded-lg border transition-opacity ${!item.enabled ? 'opacity-40' : ''}`}>

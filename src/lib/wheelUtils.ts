@@ -1,3 +1,5 @@
+import { SAMPLE_ITEMS, type Lang } from './i18n';
+
 export interface WheelItem {
   id: string;
   text: string;
@@ -30,8 +32,9 @@ export const DEFAULT_SETTINGS: WheelSettings = {
   soundEnabled: true,
 };
 
-export function createSampleItems(): WheelItem[] {
-  return ['披薩', '壽司', '漢堡', '拉麵', '咖哩飯', '牛排', '沙拉', '火鍋'].map((text, i) => ({
+export function createSampleItems(lang: Lang = 'en'): WheelItem[] {
+  const items = SAMPLE_ITEMS[lang] || SAMPLE_ITEMS.en;
+  return items.map((text, i) => ({
     id: crypto.randomUUID(),
     text,
     weight: 1,
@@ -107,6 +110,7 @@ export function getArcPath(cx: number, cy: number, r: number, startAngle: number
   const largeArc = endAngle - startAngle > 180 ? 1 : 0;
   return `M ${cx} ${cy} L ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 1 ${end.x} ${end.y} Z`;
 }
+
 
 export function getContrastColor(hex: string): string {
   const h = hex.replace('#', '');
