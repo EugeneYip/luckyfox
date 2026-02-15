@@ -27,25 +27,11 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Install dependencies (ci with safe fallback)
-        run: |
-          set +e
-          npm ci --no-audit --no-fund
-          CI_EXIT=$?
-          set -e
-          if [ $CI_EXIT -ne 0 ]; then
-            echo "npm ci failed (lock drift). Falling back to npm install..."
-            npm install --no-audit --no-fund
-          fi
+      - name: Install dependencies
+        run: npm ci
 
       - name: Build
         run: npm run build
-
-      - name: Verify build output
-        run: ls -la dist
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
